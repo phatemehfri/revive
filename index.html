@@ -420,6 +420,7 @@
   }
   .btn-submit:hover{ background:var(--black); }
   .btn-submit:active{ transform:translateY(1px); }
+  .btn-submit:disabled{ opacity:.6; cursor:default; transform:none; }
   .form-note{
     font-size:13px;
     color:var(--gray-400);
@@ -427,6 +428,9 @@
     text-align:right;
     min-height:16px;
   }
+  .form-note.is-ok{ color:var(--gray-600); }
+  .form-note.is-error{ color:var(--blue-400); }
+  .hp-field{ position:absolute; left:-10000px; width:1px; height:1px; overflow:hidden; }
 
   /* ============ FOOTER ============ */
   .footer{
@@ -436,7 +440,7 @@
   }
   .footer-inner{
     display:grid;
-    grid-template-columns:1fr auto 1fr;
+    grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
     align-items:center;
     gap:24px;
   }
@@ -456,37 +460,76 @@
     color:var(--gray-500);
     text-align:center;
   }
-  .footer-cta{
+  .footer-sub{
     justify-self:end;
-    display:flex;
-    align-items:stretch;
-    border:1px solid var(--gray-150);
-    border-radius:8px;
-    background:var(--white);
-    overflow:hidden;
-  }
-  .footer-cta-label{
+    position:relative;
     display:flex;
     align-items:center;
-    padding:0 20px;
-    font-size:12px;
+    gap:14px;
+    max-width:100%;
+    margin:0;
+  }
+  .footer-sub-label{
+    font-size:10.5px;
     font-weight:600;
-    letter-spacing:.12em;
-    color:var(--gray-500);
+    letter-spacing:.14em;
+    color:var(--gray-400);
     white-space:nowrap;
   }
-  .footer-cta-btn{
+  .footer-sub-field{
     display:flex;
-    align-items:center;
-    padding:12px 22px;
+    align-items:stretch;
+    height:38px;
+    min-width:0;
+    border:1px solid var(--gray-150);
+    border-radius:5px;
+    background:var(--white);
+    overflow:hidden;
+    transition:border-color .2s ease;
+  }
+  .footer-sub-field:focus-within{ border-color:var(--gray-400); }
+  .footer-sub-input{
+    width:220px;
+    min-width:0;
+    flex:1 1 auto;
+    border:none;
+    outline:none;
+    background:transparent;
+    padding:0 14px;
+    font-family:var(--font);
+    font-size:13px;
+    color:var(--black);
+  }
+  .footer-sub-input::placeholder{ color:var(--gray-400); }
+  .footer-sub-btn{
+    flex:0 0 auto;
+    border:none;
+    padding:0 15px;
     background:var(--gray-800);
     color:var(--white);
-    font-size:14px;
-    font-weight:600;
+    font-family:var(--font);
+    font-size:12.5px;
+    font-weight:500;
+    cursor:pointer;
     white-space:nowrap;
     transition:background .2s ease;
   }
-  .footer-cta-btn:hover{ background:var(--black); }
+  .footer-sub-btn:hover{ background:var(--black); }
+  .footer-sub-btn:disabled{ opacity:.6; cursor:default; }
+  .footer-sub-note{
+    position:absolute;
+    top:calc(100% + 6px);
+    right:0;
+    margin:0;
+    font-size:12px;
+    color:var(--gray-500);
+    white-space:nowrap;
+  }
+  .footer-sub-note.is-ok{ color:var(--gray-600); }
+  .footer-sub-note.is-error{ color:var(--blue-400); }
+  @media (max-width:1200px) and (min-width:981px){
+    .footer-sub-label{ display:none; }
+  }
 
   /* ============ RESPONSIVE ============ */
   @media (max-width: 980px){
@@ -552,8 +595,12 @@
     .laptop{ position:static; width:100%; max-width:480px; }
     .report-card{ position:static; width:78%; max-width:380px; }
     .footer{ padding:30px 32px; }
-    .footer-inner{ grid-template-columns:1fr; justify-items:center; gap:20px; }
-    .footer-brand, .footer-copy, .footer-cta{ justify-self:center; }
+    .footer-inner{ grid-template-columns:minmax(0,1fr); justify-items:center; gap:20px; }
+    .footer-brand, .footer-copy, .footer-sub{ justify-self:center; }
+    .footer-sub{ flex-direction:column; gap:8px; width:100%; max-width:340px; }
+    .footer-sub-field{ width:100%; }
+    .footer-sub-input{ width:0; }
+    .footer-sub-note{ position:static; text-align:center; white-space:normal; min-height:15px; }
   }
 
   @media (max-width:620px){
@@ -677,7 +724,9 @@
       <h2 class="request-title">Request Access</h2>
       <p class="request-copy">RE:VIVE is currently available through controlled access for professionals, researchers, and organizations interested in exploring intelligent workflows for existing buildings.</p>
     </div>
-    <form class="form" id="accessForm">
+    <form class="form" id="accessForm" action="https://formspree.io/f/mvkgbvlp" method="POST">
+      <input type="hidden" name="form_type" value="request_access">
+      <div class="hp-field" aria-hidden="true"><input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></div>
       <input type="text" name="name" placeholder="Name" required>
       <input type="text" name="organization" placeholder="Organization">
       <input type="email" name="email" placeholder="Email" required>
@@ -686,7 +735,7 @@
       <div class="form-actions">
         <button type="submit" class="btn-submit">Submit</button>
       </div>
-      <div class="form-note" id="formNote"></div>
+      <div class="form-note" id="formNote" aria-live="polite"></div>
     </form>
   </div>
 </section>
@@ -699,10 +748,16 @@
       <span>RE:VIVE</span>
     </a>
     <div class="footer-copy">© 2026 re:vive. All right reserved</div>
-    <div class="footer-cta">
-      <span class="footer-cta-label">STAY IN THE LOOP</span>
-      <a href="#request" class="footer-cta-btn">Request Access</a>
-    </div>
+    <form class="footer-sub" id="subscribeForm" action="https://formspree.io/f/mvkgbvlp" method="POST">
+      <label class="footer-sub-label" for="subscribeEmail">STAY IN THE LOOP</label>
+      <div class="footer-sub-field">
+        <input class="footer-sub-input" type="email" id="subscribeEmail" name="email" placeholder="Email address" autocomplete="email" required>
+        <button type="submit" class="footer-sub-btn">Subscribe</button>
+      </div>
+      <input type="hidden" name="form_type" value="subscribe">
+      <div class="hp-field" aria-hidden="true"><input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></div>
+      <p class="footer-sub-note" id="subscribeNote" aria-live="polite"></p>
+    </form>
   </div>
 </footer>
 
@@ -745,21 +800,57 @@
     document.getElementById('how').scrollIntoView({ behavior:'smooth' });
   });
 
-  // form handling (no backend — acknowledge submission)
-  var form = document.getElementById('accessForm');
-  var note = document.getElementById('formNote');
-  form.addEventListener('submit', function(e){
-    e.preventDefault();
-    var name = form.name.value.trim();
-    var email = form.email.value.trim();
-    if (!name || !email){
-      note.textContent = 'Please fill in your name and email.';
-      note.style.color = '#728197';
-      return;
-    }
-    note.textContent = 'Request received — we\u2019ll be in touch shortly.';
-    note.style.color = '#4B5563';
-    form.reset();
+  // form handling — both forms post to one Formspree form, distinguished by form_type
+  var FORM_ENDPOINT = 'https://formspree.io/f/mvkgbvlp';
+  function setNote(note, text, state){
+    note.textContent = text;
+    note.classList.remove('is-ok', 'is-error');
+    if (state) note.classList.add(state);
+  }
+  function bindForm(form, note, requiredFields, messages){
+    var button = form.querySelector('button[type="submit"]');
+    var pending = false;
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      if (pending) return;
+      for (var i = 0; i < requiredFields.length; i++){
+        if (!form.elements[requiredFields[i]].value.trim()){
+          setNote(note, messages.invalid, 'is-error');
+          return;
+        }
+      }
+      if (!FORM_ENDPOINT){
+        setNote(note, 'Submission is currently unavailable. Please try again later.', 'is-error');
+        return;
+      }
+      pending = true;
+      button.disabled = true;
+      setNote(note, 'Sending\u2026', null);
+      fetch(FORM_ENDPOINT, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      }).then(function(res){
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        form.reset();
+        setNote(note, messages.success, 'is-ok');
+      }).catch(function(){
+        setNote(note, messages.error, 'is-error');
+      }).then(function(){
+        pending = false;
+        button.disabled = false;
+      });
+    });
+  }
+  bindForm(document.getElementById('accessForm'), document.getElementById('formNote'), ['name', 'email'], {
+    invalid: 'Please fill in your name and email.',
+    success: 'Request received \u2014 we\u2019ll be in touch shortly.',
+    error: 'Something went wrong. Please try again.'
+  });
+  bindForm(document.getElementById('subscribeForm'), document.getElementById('subscribeNote'), ['email'], {
+    invalid: 'Please enter your email address.',
+    success: 'Thank you \u2014 you\u2019re subscribed.',
+    error: 'Subscription failed. Please try again.'
   });
 })();
 </script>
