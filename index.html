@@ -469,13 +469,6 @@
     max-width:100%;
     margin:0;
   }
-  .footer-sub-label{
-    font-size:10.5px;
-    font-weight:600;
-    letter-spacing:.14em;
-    color:var(--gray-400);
-    white-space:nowrap;
-  }
   .footer-sub-field{
     display:flex;
     align-items:stretch;
@@ -500,7 +493,7 @@
     font-size:13px;
     color:var(--black);
   }
-  .footer-sub-input::placeholder{ color:var(--gray-400); }
+  .footer-sub-input::placeholder{ color:var(--gray-400); font-size:10.5px; font-weight:600; letter-spacing:.14em; }
   .footer-sub-btn{
     flex:0 0 auto;
     border:none;
@@ -527,9 +520,6 @@
   }
   .footer-sub-note.is-ok{ color:var(--gray-600); }
   .footer-sub-note.is-error{ color:var(--blue-400); }
-  @media (max-width:1200px) and (min-width:981px){
-    .footer-sub-label{ display:none; }
-  }
 
   /* ============ RESPONSIVE ============ */
   @media (max-width: 980px){
@@ -749,9 +739,8 @@
     </a>
     <div class="footer-copy">© 2026 re:vive. All right reserved</div>
     <form class="footer-sub" id="subscribeForm" action="https://formspree.io/f/mvkgbvlp" method="POST">
-      <label class="footer-sub-label" for="subscribeEmail">STAY IN THE LOOP</label>
       <div class="footer-sub-field">
-        <input class="footer-sub-input" type="email" id="subscribeEmail" name="email" placeholder="Email address" autocomplete="email" required>
+        <input class="footer-sub-input" type="email" id="subscribeEmail" name="email" placeholder="STAY IN THE LOOP" aria-label="Email address" autocomplete="email" required>
         <button type="submit" class="footer-sub-btn">Subscribe</button>
       </div>
       <input type="hidden" name="form_type" value="subscribe">
